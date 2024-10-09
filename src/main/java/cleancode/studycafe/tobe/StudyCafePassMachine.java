@@ -9,6 +9,7 @@ import cleancode.studycafe.tobe.model.StudyCafeLockerPasses;
 import cleancode.studycafe.tobe.model.StudyCafePass;
 import cleancode.studycafe.tobe.model.StudyCafePassType;
 import cleancode.studycafe.tobe.model.StudyCafePasses;
+import cleancode.studycafe.tobe.model.UserSelectPass;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +27,9 @@ public class StudyCafePassMachine {
 
             StudyCafePass selectedPass = getStudyCafePassFromUser();
             StudyCafeLockerPass selectedLockerPass = getStudyCafeLockerPassBy(selectedPass);
+            UserSelectPass userSelectPass = UserSelectPass.of(selectedPass, selectedLockerPass);
 
-            outputHandler.showPassOrderSummary(selectedPass, selectedLockerPass);
+            outputHandler.showPassOrderSummary(userSelectPass);
 
         } catch (AppException e) {
             outputHandler.showSimpleMessage(e.getMessage());

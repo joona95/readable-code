@@ -3,6 +3,7 @@ package cleancode.studycafe.tobe.io;
 import cleancode.studycafe.tobe.model.StudyCafeLockerPass;
 import cleancode.studycafe.tobe.model.StudyCafePass;
 import cleancode.studycafe.tobe.model.StudyCafePassType;
+import cleancode.studycafe.tobe.model.UserSelectPass;
 
 import java.util.List;
 
@@ -43,7 +44,10 @@ public class OutputHandler {
         System.out.println("1. 예 | 2. 아니오");
     }
 
-    public void showPassOrderSummary(StudyCafePass selectedPass, StudyCafeLockerPass lockerPass) {
+    public void showPassOrderSummary(UserSelectPass userSelectPass) {
+        StudyCafePass selectedPass = userSelectPass.getStudyCafePass();
+        StudyCafeLockerPass lockerPass = userSelectPass.getStudyCafeLockerPass();
+
         System.out.println();
         System.out.println("이용 내역");
         System.out.println("이용권: " + generatePassDisplay(selectedPass.getPassType(), selectedPass.getDuration(), selectedPass.getPrice()));
@@ -51,12 +55,12 @@ public class OutputHandler {
             System.out.println("사물함: " + generatePassDisplay(lockerPass.getPassType(), lockerPass.getDuration(), lockerPass.getPrice()));
         }
 
-        int discountPrice = selectedPass.getDiscountPrice();
+        int discountPrice = userSelectPass.getDiscountPrice();
         if (discountPrice > 0) {
             System.out.println("이벤트 할인 금액: " + discountPrice + "원");
         }
 
-        int totalPrice = selectedPass.getPrice() - discountPrice + (lockerPass != null ? lockerPass.getPrice() : 0);
+        int totalPrice = userSelectPass.getTotalPrice();
         System.out.println("총 결제 금액: " + totalPrice + "원");
         System.out.println();
     }
