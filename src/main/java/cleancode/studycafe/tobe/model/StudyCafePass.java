@@ -18,6 +18,10 @@ public class StudyCafePass {
         return new StudyCafePass(passType, duration, price, discountRate);
     }
 
+    public boolean isFixedType() {
+        return passType == StudyCafePassType.FIXED;
+    }
+
     public StudyCafePassType getPassType() {
         return passType;
     }

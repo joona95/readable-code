@@ -24,30 +24,10 @@ public class StudyCafePassMachine {
             outputHandler.showWelcomeMessage();
             outputHandler.showAnnouncement();
 
-            outputHandler.askPassTypeSelection();
-            StudyCafePassType studyCafePassType = inputHandler.getPassTypeSelectingUserAction();
-            List<StudyCafePass> studyCafePasses = getStudyCafePassesBy(studyCafePassType);
-            outputHandler.showPassListForSelection(studyCafePasses);
-            StudyCafePass selectedPass = inputHandler.getSelectPass(studyCafePasses);
+            StudyCafePass selectedPass = getStudyCafePassFromUser();
+            StudyCafeLockerPass selectedLockerPass = getStudyCafeLockerPassBy(selectedPass);
 
-            if (studyCafePassType == StudyCafePassType.FIXED) {
-
-                StudyCafeLockerPasses lockerPasses = studyCafeFileHandler.readLockerPasses();
-                Optional<StudyCafeLockerPass> lockerPass = lockerPasses.findBy(selectedPass);
-
-                boolean lockerSelection = false;
-                if (lockerPass.isPresent()) {
-                    outputHandler.askLockerPass(lockerPass.get());
-                    lockerSelection = inputHandler.getLockerSelection();
-                }
-
-                if (lockerSelection) {
-                    outputHandler.showPassOrderSummary(selectedPass, lockerPass.get());
-                    return;
-                }
-            }
-
-            outputHandler.showPassOrderSummary(selectedPass, null);
+            outputHandler.showPassOrderSummary(selectedPass, selectedLockerPass);
 
         } catch (AppException e) {
             outputHandler.showSimpleMessage(e.getMessage());
@@ -56,9 +36,30 @@ public class StudyCafePassMachine {
         }
     }
 
+    private StudyCafePass getStudyCafePassFromUser() {
+        outputHandler.askPassTypeSelection();
+        StudyCafePassType studyCafePassType = inputHandler.getPassTypeSelectingUserAction();
+        List<StudyCafePass> studyCafePasses = getStudyCafePassesBy(studyCafePassType);
+        outputHandler.showPassListForSelection(studyCafePasses);
+        return inputHandler.getSelectPass(studyCafePasses);
+    }
+
     private List<StudyCafePass> getStudyCafePassesBy(StudyCafePassType studyCafePassType) {
         StudyCafePasses studyCafePasses = studyCafeFileHandler.readStudyCafePasses();
         return studyCafePasses.findAllBy(studyCafePassType);
     }
 
+    private StudyCafeLockerPass getStudyCafeLockerPassBy(StudyCafePass studyCafePass) {
+        StudyCafeLockerPasses lockerPasses = studyCafeFileHandler.readLockerPasses();
+        Optional<StudyCafeLockerPass> lockerPass = lockerPasses.findBy(studyCafePass);
+        return lockerPass.map(this::getStudyCafeLockerPassFromUser).orElse(null);
+    }
+
+    private StudyCafeLockerPass getStudyCafeLockerPassFromUser(StudyCafeLockerPass lockerPass) {
+        outputHandler.askLockerPass(lockerPass);
+        if (inputHandler.doesLockerUse()) {
+            return lockerPass;
+        }
+        return null;
+    }
 }
