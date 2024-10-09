@@ -2,7 +2,6 @@ package cleancode.studycafe.tobe.io;
 
 import cleancode.studycafe.tobe.model.StudyCafeLockerPass;
 import cleancode.studycafe.tobe.model.StudyCafePass;
-import cleancode.studycafe.tobe.model.StudyCafePassType;
 import cleancode.studycafe.tobe.model.UserSelectPass;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class OutputHandler {
         System.out.println("이용권 목록");
         for (int index = 0; index < passes.size(); index++) {
             StudyCafePass pass = passes.get(index);
-            System.out.println(String.format("%s. ", index + 1) + generatePassDisplay(pass.getPassType(), pass.getDuration(), pass.getPrice()));
+            System.out.println(String.format("%s. ", index + 1) + StudyCafePassDisplayProvider.findStudyCafePassDisplayFrom(pass));
         }
     }
 
@@ -37,7 +36,8 @@ public class OutputHandler {
         System.out.println();
         String askMessage = String.format(
             "사물함을 이용하시겠습니까? (%s)",
-            generatePassDisplay(lockerPass.getPassType(), lockerPass.getDuration(), lockerPass.getPrice())
+
+            StudyCafeLockerPassDisplayProvider.findStudyCafeLockerPassDisplayFrom(lockerPass)
         );
 
         System.out.println(askMessage);
@@ -45,14 +45,14 @@ public class OutputHandler {
     }
 
     public void showPassOrderSummary(UserSelectPass userSelectPass) {
-        StudyCafePass selectedPass = userSelectPass.getStudyCafePass();
-        StudyCafeLockerPass lockerPass = userSelectPass.getStudyCafeLockerPass();
 
         System.out.println();
         System.out.println("이용 내역");
-        System.out.println("이용권: " + generatePassDisplay(selectedPass.getPassType(), selectedPass.getDuration(), selectedPass.getPrice()));
-        if (lockerPass != null) {
-            System.out.println("사물함: " + generatePassDisplay(lockerPass.getPassType(), lockerPass.getDuration(), lockerPass.getPrice()));
+        StudyCafePass studyCafePass = userSelectPass.getStudyCafePass();
+        System.out.println("이용권: " + StudyCafePassDisplayProvider.findStudyCafePassDisplayFrom(studyCafePass));
+        if (userSelectPass.hasLockerPass()) {
+            StudyCafeLockerPass studyCafeLockerPass = userSelectPass.getStudyCafeLockerPass();
+            System.out.println("사물함: " + StudyCafeLockerPassDisplayProvider.findStudyCafeLockerPassDisplayFrom(studyCafeLockerPass));
         }
 
         int discountPrice = userSelectPass.getDiscountPrice();
@@ -67,19 +67,6 @@ public class OutputHandler {
 
     public void showSimpleMessage(String message) {
         System.out.println(message);
-    }
-
-    private String generatePassDisplay(StudyCafePassType passType, int duration, int price) {
-        if (passType == StudyCafePassType.HOURLY) {
-            return String.format("%s시간권 - %d원", duration, price);
-        }
-        if (passType == StudyCafePassType.WEEKLY) {
-            return String.format("%s주권 - %d원", duration, price);
-        }
-        if (passType == StudyCafePassType.FIXED) {
-            return String.format("%s주권 - %d원", duration, price);
-        }
-        return "";
     }
 
 }

@@ -33,4 +33,12 @@ public class UserSelectPass {
     private int getLockerPassPrice() {
         return studyCafeLockerPass != null ? studyCafeLockerPass.getPrice() : 0;
     }
+
+    public StudyCafePassType getPassType() {
+        return studyCafePass.getPassType();
+    }
+
+    public boolean hasLockerPass() {
+        return studyCafeLockerPass != null;
+    }
 }
