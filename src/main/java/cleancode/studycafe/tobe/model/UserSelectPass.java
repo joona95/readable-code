@@ -3,7 +3,7 @@ package cleancode.studycafe.tobe.model;
 public class UserSelectPass {
 
     private final StudyCafePass studyCafePass;
-    private StudyCafeLockerPass studyCafeLockerPass;
+    private final StudyCafeLockerPass studyCafeLockerPass;
 
     private UserSelectPass(StudyCafePass studyCafePass, StudyCafeLockerPass studyCafeLockerPass) {
         this.studyCafePass = studyCafePass;
