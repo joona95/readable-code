@@ -26,7 +26,10 @@ public class StudyCafePassMachine {
             outputHandler.showAnnouncement();
 
             StudyCafePass selectedPass = getStudyCafePassFromUser();
-            StudyCafeLockerPass selectedLockerPass = getStudyCafeLockerPassBy(selectedPass);
+            StudyCafeLockerPass selectedLockerPass = null;
+            if (selectedPass.isFixedType()) {
+                selectedLockerPass = getStudyCafeLockerPassBy(selectedPass);
+            }
             UserSelectPass userSelectPass = UserSelectPass.of(selectedPass, selectedLockerPass);
 
             outputHandler.showPassOrderSummary(userSelectPass);
