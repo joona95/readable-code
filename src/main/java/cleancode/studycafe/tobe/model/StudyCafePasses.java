@@ -14,7 +14,7 @@ public class StudyCafePasses {
         return new StudyCafePasses(studyCafePasses);
     }
 
-    public List<StudyCafePass> findBy(StudyCafePassType studyCafePassType) {
+    public List<StudyCafePass> findAllBy(StudyCafePassType studyCafePassType) {
         return studyCafePasses.stream()
                 .filter(studyCafePass -> studyCafePass.getPassType() == studyCafePassType)
                 .toList();
