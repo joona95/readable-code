@@ -17,6 +17,7 @@ public class StudyCafePassMachine {
 
     private final InputHandler inputHandler = new InputHandler();
     private final OutputHandler outputHandler = new OutputHandler();
+    private final StudyCafeFileHandler studyCafeFileHandler = new StudyCafeFileHandler();
 
     public void run() {
         try {
@@ -25,27 +26,11 @@ public class StudyCafePassMachine {
 
             outputHandler.askPassTypeSelection();
             StudyCafePassType studyCafePassType = inputHandler.getPassTypeSelectingUserAction();
+            List<StudyCafePass> studyCafePasses = getStudyCafePassesBy(studyCafePassType);
+            outputHandler.showPassListForSelection(studyCafePasses);
+            StudyCafePass selectedPass = inputHandler.getSelectPass(studyCafePasses);
 
-            if (studyCafePassType == StudyCafePassType.HOURLY) {
-                StudyCafeFileHandler studyCafeFileHandler = new StudyCafeFileHandler();
-                StudyCafePasses studyCafePasses = studyCafeFileHandler.readStudyCafePasses();
-                List<StudyCafePass> hourlyPasses = studyCafePasses.findAllBy(StudyCafePassType.HOURLY);
-                outputHandler.showPassListForSelection(hourlyPasses);
-                StudyCafePass selectedPass = inputHandler.getSelectPass(hourlyPasses);
-                outputHandler.showPassOrderSummary(selectedPass, null);
-            } else if (studyCafePassType == StudyCafePassType.WEEKLY) {
-                StudyCafeFileHandler studyCafeFileHandler = new StudyCafeFileHandler();
-                StudyCafePasses studyCafePasses = studyCafeFileHandler.readStudyCafePasses();
-                List<StudyCafePass> weeklyPasses = studyCafePasses.findAllBy(StudyCafePassType.WEEKLY);
-                outputHandler.showPassListForSelection(weeklyPasses);
-                StudyCafePass selectedPass = inputHandler.getSelectPass(weeklyPasses);
-                outputHandler.showPassOrderSummary(selectedPass, null);
-            } else if (studyCafePassType == StudyCafePassType.FIXED) {
-                StudyCafeFileHandler studyCafeFileHandler = new StudyCafeFileHandler();
-                StudyCafePasses studyCafePasses = studyCafeFileHandler.readStudyCafePasses();
-                List<StudyCafePass> fixedPasses = studyCafePasses.findAllBy(StudyCafePassType.FIXED);
-                outputHandler.showPassListForSelection(fixedPasses);
-                StudyCafePass selectedPass = inputHandler.getSelectPass(fixedPasses);
+            if (studyCafePassType == StudyCafePassType.FIXED) {
 
                 StudyCafeLockerPasses lockerPasses = studyCafeFileHandler.readLockerPasses();
                 Optional<StudyCafeLockerPass> lockerPass = lockerPasses.findBy(selectedPass);
@@ -58,15 +43,22 @@ public class StudyCafePassMachine {
 
                 if (lockerSelection) {
                     outputHandler.showPassOrderSummary(selectedPass, lockerPass.get());
-                } else {
-                    outputHandler.showPassOrderSummary(selectedPass, null);
+                    return;
                 }
             }
+
+            outputHandler.showPassOrderSummary(selectedPass, null);
+
         } catch (AppException e) {
             outputHandler.showSimpleMessage(e.getMessage());
         } catch (Exception e) {
             outputHandler.showSimpleMessage("알 수 없는 오류가 발생했습니다.");
         }
+    }
+
+    private List<StudyCafePass> getStudyCafePassesBy(StudyCafePassType studyCafePassType) {
+        StudyCafePasses studyCafePasses = studyCafeFileHandler.readStudyCafePasses();
+        return studyCafePasses.findAllBy(studyCafePassType);
     }
 
 }
