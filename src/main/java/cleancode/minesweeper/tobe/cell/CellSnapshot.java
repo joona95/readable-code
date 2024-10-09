@@ -25,7 +25,7 @@ public class CellSnapshot {
     }
 
     public static CellSnapshot ofLandMine() {
-        return new CellSnapshot(CellSnapshotStatus.EMPTY, 0);
+        return new CellSnapshot(CellSnapshotStatus.LAND_MINE, 0);
     }
 
     public static CellSnapshot ofNumber(int nearbyLandMineCount) {
@@ -36,12 +36,12 @@ public class CellSnapshot {
         return new CellSnapshot(CellSnapshotStatus.UNCHECKED, 0);
     }
 
-    public CellSnapshotStatus getStatus() {
-        return status;
-    }
-
     public int getNearbyLandMineCount() {
         return nearbyLandMineCount;
+    }
+
+    public boolean isSameStatus(CellSnapshotStatus cellSnapshotStatus) {
+        return this.status == cellSnapshotStatus;
     }
 
     @Override
