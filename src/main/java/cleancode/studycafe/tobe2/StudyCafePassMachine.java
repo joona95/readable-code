@@ -1,6 +1,7 @@
 package cleancode.studycafe.tobe2;
 
 import cleancode.studycafe.tobe2.io.StudyIOHandler;
+import cleancode.studycafe.tobe2.model.order.StudyCafePassOrder;
 import cleancode.studycafe.tobe2.model.pass.locker.StudyCafeLockerPass;
 import cleancode.studycafe.tobe2.model.pass.locker.StudyCafeLockerPasses;
 import cleancode.studycafe.tobe2.model.pass.StudyCafePassType;
@@ -24,11 +25,12 @@ public class StudyCafePassMachine {
 
             StudyCafeSeatPass selectedPass = selectPass();
             Optional<StudyCafeLockerPass> optionalLockerPass = selectLockerPass(selectedPass);
-
-            optionalLockerPass.ifPresentOrElse(
-                    lockerPass -> ioHandler.showPassOrderSummary(selectedPass, lockerPass),
-                    () -> ioHandler.showPassOrderSummary(selectedPass)
+            StudyCafePassOrder passOrder = StudyCafePassOrder.of(
+                    selectedPass,
+                    optionalLockerPass.orElse(null)
             );
+            ioHandler.showPassOrderSummary(passOrder);
+
         } catch (AppException e) {
             ioHandler.showSimpleMessage(e.getMessage());
         } catch (Exception e) {
